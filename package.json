@@ -1,6 +1,5 @@
 {
   "author": "Barok D. Getachew",
-  "main": "bot.js",
   "scripts": {
     "dev": "nodemon bot.ts",
     "build": "npx tsc",

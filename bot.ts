@@ -7,7 +7,7 @@ function main() {
   const bot = new Bot(process.env.BOT_TOKEN);
 
   // listen to tiktok links
-  bot.hears(/^https:\/\/www.tiktok.com\/.*/g, (ctx) => {
+  bot.hears(/^https:\/\/(www|vm).tiktok.com\/.*/g, (ctx) => {
     if (!ctx.message?.text) return;
 
     try {
