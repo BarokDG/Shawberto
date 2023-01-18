@@ -3,7 +3,6 @@ import axios from "axios";
 
 const bot = new Bot("5898666265:AAHCrh13937amAcJiq_B8qRpCi_TBMZesNo");
 
-bot.command("start", (ctx) => ctx.reply("Welcome! Up and running."));
 bot.hears(/^https:\/\/www.tiktok.com\/.*/g, (ctx) => {
   if (!ctx.message?.text) return;
 
