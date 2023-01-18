@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "nodemon bot.ts",
     "build": "npx tsc",
-    "deploy": "npm build && node bot.js"
+    "deploy": "npm run build && node bot.js"
   },
   "devDependencies": {
     "@types/node": "*",
