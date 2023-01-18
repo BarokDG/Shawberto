@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "nodemon bot.ts"
+    "dev": "nodemon bot.ts",
+    "deploy": "node bot.js"
   },
   "devDependencies": {
     "@types/node": "*",
