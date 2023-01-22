@@ -1,9 +1,7 @@
 {
   "author": "Barok D. Getachew",
   "scripts": {
-    "dev": "nodemon bot.ts",
-    "build": "npx tsc",
-    "deploy": "npm run build && node bot.js"
+    "dev": "nodemon api/bot.ts"
   },
   "devDependencies": {
     "@types/node": "*",
