@@ -1,8 +1,10 @@
 import { Bot, webhookCallback } from "grammy";
 import { fetchTiktokVideo } from "../fetch-scripts";
 
+require("dotenv").config();
+
 if (!process.env.BOT_TOKEN) {
-  throw Error("Environment variable 'BOT_TOKEN' not set");
+  throw new Error("Environment variable 'BOT_TOKEN' not set");
 }
 
 const bot = new Bot(process.env.BOT_TOKEN);
