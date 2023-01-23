@@ -1,9 +1,14 @@
-import { Bot, webhookCallback } from "grammy";
+import { Bot, GrammyError, webhookCallback } from "grammy";
 import { fetchTiktokVideo } from "../fetch-scripts";
 
 require("dotenv").config();
 
-const bot = new Bot(process.env.BOT_TOKEN as string);
+const BOT_TOKEN: string =
+  process.env.ENV === "development"
+    ? (process.env.TEST_BOT_TOKEN as string)
+    : (process.env.BOT_TOKEN as string);
+
+const bot = new Bot(BOT_TOKEN);
 
 // listen to tiktok links
 bot.hears(/^https:\/\/(www|vm).tiktok.com\/.*/g, async (ctx) => {
@@ -12,11 +17,13 @@ bot.hears(/^https:\/\/(www|vm).tiktok.com\/.*/g, async (ctx) => {
   try {
     const videoUrl: string | null = await fetchTiktokVideo(ctx.message.text);
     if (!videoUrl) {
-      await ctx.reply("Invalid url");
+      ctx.reply("Invalid url");
       return;
     }
 
-    ctx.replyWithVideo(videoUrl);
+    ctx
+      .replyWithVideo(videoUrl)
+      .catch(() => ctx.reply("Video size not allowed by telegram"));
   } catch (err) {
     ctx.reply("This shouldn't happen. Call Barok.");
   }
@@ -25,4 +32,10 @@ bot.hears(/^https:\/\/(www|vm).tiktok.com\/.*/g, async (ctx) => {
 // To test if running
 bot.hears(/Shawberto, you good?/, (ctx) => ctx.reply("Shawberto is running."));
 
+// Use long-polling with a different BOT_TOKEN in development
+if (process.env.ENV === "development") {
+  bot.start();
+}
+
+// Handler for webhook updates in production
 export default webhookCallback(bot, "http");

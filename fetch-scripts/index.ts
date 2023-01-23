@@ -24,7 +24,7 @@ export async function fetchTiktokVideo(
       tiktokCDNLink = response.data.video[0];
     })
     .catch(function (error: any) {
-      console.error(error);
+      console.log(error);
     });
 
   return tiktokCDNLink;
