@@ -3,11 +3,7 @@ import { fetchTiktokVideo } from "../fetch-scripts";
 
 require("dotenv").config();
 
-if (!process.env.BOT_TOKEN) {
-  throw new Error("Environment variable 'BOT_TOKEN' not set");
-}
-
-const bot = new Bot(process.env.BOT_TOKEN);
+const bot = new Bot(process.env.BOT_TOKEN as string);
 
 // listen to tiktok links
 bot.hears(/^https:\/\/(www|vm).tiktok.com\/.*/g, async (ctx) => {
@@ -20,16 +16,13 @@ bot.hears(/^https:\/\/(www|vm).tiktok.com\/.*/g, async (ctx) => {
       return;
     }
 
-    await ctx.replyWithVideo(videoUrl);
+    ctx.replyWithVideo(videoUrl);
   } catch (err) {
-    await ctx.reply("This shouldn't happen. Call Barok.");
+    ctx.reply("This shouldn't happen. Call Barok.");
   }
 });
 
 // To test if running
-bot.hears(
-  /Shawberto, you good?/,
-  async (ctx) => await ctx.reply("Shawberto is running.")
-);
+bot.hears(/Shawberto, you good?/, (ctx) => ctx.reply("Shawberto is running."));
 
 export default webhookCallback(bot, "http");
