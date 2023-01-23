@@ -32,6 +32,4 @@ bot.hears(
   async (ctx) => await ctx.reply("Shawberto is running.")
 );
 
-bot.start();
-
 export default webhookCallback(bot, "http");
