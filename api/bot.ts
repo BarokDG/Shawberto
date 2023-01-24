@@ -1,4 +1,4 @@
-import { Bot, GrammyError, webhookCallback } from "grammy";
+import { Bot, webhookCallback } from "grammy";
 import { fetchTiktokVideo } from "../fetch-scripts";
 
 require("dotenv").config();
@@ -21,16 +21,19 @@ bot.hears(/^https:\/\/(www|vm).tiktok.com\/.*/g, async (ctx) => {
       return;
     }
 
-    ctx
+    await ctx
       .replyWithVideo(videoUrl)
-      .catch(() => ctx.reply("Video size not allowed by telegram"));
+      .catch(async () => await ctx.reply("Video size not allowed by telegram"));
   } catch (err) {
-    ctx.reply("This shouldn't happen. Call Barok.");
+    await ctx.reply("This shouldn't happen. Call Barok.");
   }
 });
 
 // To test if running
-bot.hears(/Shawberto, you good?/, (ctx) => ctx.reply("Shawberto is running."));
+bot.hears(
+  /Shawberto, you good?/,
+  async (ctx) => await ctx.reply("Shawberto is running.")
+);
 
 // Use long-polling with a different BOT_TOKEN in development
 if (process.env.ENV === "development") {

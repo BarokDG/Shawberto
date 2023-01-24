@@ -1,5 +1,17 @@
 import { Bot } from "grammy";
 
+require("dotenv").config();
+
+let WEBHOOK_ADDRESS: string = (process.env.ENV = "debug"
+  ? (process.env.NGROK_WEBHOOK_ADDRESS as string)
+  : (process.env.WEBHOOK_ADDRESS as string));
+
 const bot = new Bot(process.env.BOT_TOKEN as string);
 
-bot.api.setWebhook(process.env.WEBHOOK_ADDRESS as string);
+(async function () {
+  try {
+    await bot.api.setWebhook(WEBHOOK_ADDRESS);
+  } catch (err) {
+    console.log(err);
+  }
+})();

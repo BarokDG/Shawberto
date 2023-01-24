@@ -5,11 +5,11 @@
     "setup-webhook": "ts-node index.ts"
   },
   "dependencies": {
-    "@grammyjs/types": "^2.11.2",
     "axios": "^1.2.3",
     "grammy": "^1.11.2"
   },
   "devDependencies": {
+    "@grammyjs/types": "^2.11.2",
     "@types/node": "*",
     "dotenv": "^16.0.3",
     "nodemon": "^2.0.20",
