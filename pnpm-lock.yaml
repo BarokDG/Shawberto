@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@grammyjs/types': ^2.11.2
   '@types/node': '*'
   axios: ^1.2.3
   dotenv: ^16.0.3
@@ -10,6 +11,7 @@ specifiers:
   typescript: ^4.8.4
 
 dependencies:
+  '@grammyjs/types': 2.11.2
   axios: 1.2.3
   grammy: 1.13.1
 
