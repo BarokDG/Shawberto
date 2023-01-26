@@ -10,7 +10,11 @@ const bot = new Bot(process.env.BOT_TOKEN as string);
 
 (async function () {
   try {
-    await bot.api.setWebhook(WEBHOOK_ADDRESS);
+    await bot.api.setWebhook(WEBHOOK_ADDRESS, {
+      allowed_updates: ["message"],
+    });
+
+    console.log("Webhook set!");
   } catch (err) {
     console.log(err);
   }
