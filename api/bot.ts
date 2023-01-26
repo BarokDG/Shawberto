@@ -21,10 +21,13 @@ bot.hears(/^https:\/\/(www|vm).tiktok.com\/.*/g, async (ctx) => {
   try {
     const videoUrl: string | null = await fetchTiktokVideo(ctx.message.text);
     if (!videoUrl) {
-      await ctx.reply("Invalid url", {
-        reply_to_message_id:
-          ctx.chat.type === "private" ? undefined : ctx.msg.message_id,
-      });
+      await ctx.reply(
+        "Invalid url or bot request limit reached(will fix this soon)",
+        {
+          reply_to_message_id:
+            ctx.chat.type === "private" ? undefined : ctx.msg.message_id,
+        }
+      );
       return;
     }
 
