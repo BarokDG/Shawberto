@@ -4,8 +4,8 @@ import { fetchTiktokVideo } from "../fetch-scripts";
 require("dotenv").config();
 
 /**
- * * TEST_BOT_TOKEN is for a different bot to develop new features without stopping the main bot
- * * ONLY to be used in development
+ * * TEST_BOT_TOKEN is for a different bot to develop new features without stopping the main bot.
+ * * ONLY to be used in development.
  * */
 const BOT_TOKEN: string =
   process.env.ENV === "development"
@@ -15,7 +15,7 @@ const BOT_TOKEN: string =
 const bot = new Bot(BOT_TOKEN);
 
 // listen to tiktok links
-bot.hears(/^https:\/\/(www|vm).tiktok.com\/.*/g, async (ctx) => {
+bot.hears(/^https:\/\/(www|vm|vt).tiktok.com\/.*/g, async (ctx) => {
   if (!ctx.message?.text) return;
 
   try {

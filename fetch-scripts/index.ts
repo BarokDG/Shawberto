@@ -1,18 +1,20 @@
 import axios from "axios";
 
+require("dotenv").config();
+
 export async function fetchTiktokVideo(
   tiktokVideoLink: string
 ): Promise<string | null> {
   const options = {
     method: "GET",
-    url: "https://tiktok-downloader-download-videos-without-watermark1.p.rapidapi.com/media-info/",
+    url: "https://tiktok-video-no-watermark2.p.rapidapi.com/",
     params: {
-      link: tiktokVideoLink,
+      url: tiktokVideoLink,
+      hd: "0",
     },
     headers: {
-      "X-RapidAPI-Key": "11a08a8211msh8578bdf05a9ed95p11e117jsnd72bdf0d38fe",
-      "X-RapidAPI-Host":
-        "tiktok-downloader-download-videos-without-watermark1.p.rapidapi.com",
+      "X-RapidAPI-Key": process.env["APIKey"],
+      "X-RapidAPI-Host": "tiktok-video-no-watermark2.p.rapidapi.com",
     },
   };
 
@@ -20,10 +22,10 @@ export async function fetchTiktokVideo(
 
   await axios
     .request(options)
-    .then(function (response) {
-      tiktokCDNLink = response.data.result.video.url_list[0];
+    .then((response) => {
+      tiktokCDNLink = response.data.data.play;
     })
-    .catch(function (error: any) {
+    .catch((error) => {
       console.log(error);
     });
 
