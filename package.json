@@ -4,15 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start:dev": "dotenv -e .env.development.local nodemon api/bot.ts",
+    "start:prod": "dotenv -e .env.production.local node api/bot.ts",
     "test": "test"
   },
   "author": "Barok Dagim Getachew",
   "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "grammy": "^1.18.3"
+  },
   "devDependencies": {
     "@types/node": "^20.6.3",
+    "dotenv-cli": "^7.3.0",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
-  },
-  "dependencies": {
-    "grammy": "^1.18.3"
   }
 }
