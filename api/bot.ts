@@ -1,22 +1,66 @@
 import { Bot } from "grammy";
-
+import axios from "axios";
 import "dotenv/config";
+import type { VideoInfo } from "./types";
 
-const token = process.env.BOT_TOKEN;
-if (!token) throw new Error("BOT_TOKEN is unset");
+const { BOT_TOKEN, API_AUTHORIZATION_KEY } = process.env;
+if (!BOT_TOKEN) throw new Error("BOT_TOKEN is unset");
 
-const bot = new Bot(token);
+const bot = new Bot(BOT_TOKEN);
 
-// You can now register listeners on your bot object `bot`.
-// grammY will call the listeners when users send messages to your bot.
+bot.command(
+  "start",
+  async (ctx) => await ctx.reply("Welcome! Up and running.")
+);
+bot.hears(/^https:\/\/(www|vm|vt).tiktok.com\/.*/g, async (ctx) => {
+  if (!ctx.message?.text) return;
 
-// Handle the /start command.
-bot.command("start", (ctx) => ctx.reply("Welcome! Up and running."));
-// Handle other messages.
-bot.on("message", (ctx) => ctx.reply("Got another message!"));
+  try {
+    const videoUrl: VideoInfo | undefined = await getTiktokVideoInfo(
+      ctx.message.text
+    );
 
-// Now that you specified how to handle messages, you can start your bot.
-// This will connect to the Telegram servers and wait for messages.
+    if (!videoUrl) {
+      throw new Error("Video not found");
+    }
 
-// Start the bot.
-bot.start();
+    await ctx.replyWithVideo(videoUrl.data.play, {
+      reply_to_message_id:
+        ctx.chat.type === "private" ? undefined : ctx.msg.message_id,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+});
+bot.hears(
+  /Shawberto, you good?/,
+  async (ctx) =>
+    await ctx.reply("Shawberto is running.", {
+      reply_to_message_id:
+        ctx.chat.type === "private" ? undefined : ctx.msg.message_id,
+    })
+);
+
+void bot.start();
+
+async function getTiktokVideoInfo(
+  videoUrl: string
+): Promise<VideoInfo | undefined> {
+  const options = {
+    url: "https://tiktok-video-feature-summary.p.rapidapi.com/",
+    params: {
+      url: videoUrl,
+    },
+    headers: {
+      "X-RapidAPI-Key": API_AUTHORIZATION_KEY,
+      "X-RapidAPI-Host": "tiktok-video-feature-summary.p.rapidapi.com",
+    },
+  };
+
+  try {
+    const response = await axios.request(options);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
