@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "dotenv -e .env.development.local nodemon api/bot.ts",
-    "start:prod": "dotenv -e .env.production.local node api/bot.ts",
-    "test": "test"
+    "start:prod": "dotenv -e .env.production.local node api/bot.ts"
   },
   "author": "Barok Dagim Getachew",
   "license": "ISC",
