@@ -34,8 +34,8 @@ bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
       ctx.message.text
     );
 
-    if (!videoUrl) {
-      throw new Error("Video not found");
+    if (!videoUrl || videoUrl.code === -1) {
+      throw new Error();
     }
 
     await bot.api.editMessageText(
@@ -59,7 +59,7 @@ bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
         void bot.api.deleteMessage(ctx.chat.id, loader.message_id);
         clearTimeout(timer);
       },
-      isError ? 2000 : 0
+      isError ? 1000 : 0
     );
   }
 });
