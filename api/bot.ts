@@ -3,9 +3,14 @@ import axios from "axios";
 import "dotenv/config";
 import type { VideoInfo } from "./types";
 
-const TIKTOK_LINK_REGEX = /^https:\/\/(www|vm|vt).tiktok.com\/.*/g;
+const { BOT_TOKEN, API_AUTHORIZATION_KEY, ENV } = process.env;
 
-const { BOT_TOKEN, API_AUTHORIZATION_KEY } = process.env;
+const isDevelopment = ENV === "development";
+
+const TIKTOK_LINK_REGEX = /^https:\/\/(www|vm|vt).tiktok.com\/.*/g;
+const SHAWBERTO_REGEX = /Shawberto, you good?/g;
+const DEVBERTO_REGEX = /Devberto, you good?/g;
+
 if (!BOT_TOKEN) throw new Error("BOT_TOKEN is unset");
 
 const bot = new Bot(BOT_TOKEN);
@@ -21,19 +26,41 @@ bot.command(
 bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
   if (!ctx.message?.text) return;
 
+  const loader = await ctx.reply("Processing video...");
+  let isError = false;
+
   try {
     const videoUrl: VideoInfo | undefined = await getTiktokVideoInfo(
       ctx.message.text
     );
 
     if (!videoUrl) {
-      await ctx.reply("Video not found.");
       throw new Error("Video not found");
     }
 
+    await bot.api.editMessageText(
+      ctx.chat.id,
+      loader.message_id,
+      "Video found ✅"
+    );
+
     await ctx.replyWithVideo(videoUrl.data.play);
   } catch (error) {
-    console.error(error);
+    await bot.api.editMessageText(
+      ctx.chat.id,
+      loader.message_id,
+      "Error processing video❌"
+    );
+
+    isError = true;
+  } finally {
+    const timer = setTimeout(
+      () => {
+        void bot.api.deleteMessage(ctx.chat.id, loader.message_id);
+        clearTimeout(timer);
+      },
+      isError ? 2000 : 0
+    );
   }
 });
 
@@ -41,8 +68,8 @@ bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
 bot
   .on(":text")
   .hears(
-    "Shawberto, you good?",
-    async (ctx) => await ctx.reply("Shawberto is running")
+    isDevelopment ? DEVBERTO_REGEX : SHAWBERTO_REGEX,
+    async (ctx) => await ctx.reply(`${ctx.me.first_name} is running`)
   );
 
 void bot.start();
