@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "dotenv -e .env.development.local nodemon api/bot.ts",
+    "start:dev": "cross-env DEBUG=\"grammy*\" dotenv -e .env.development.local nodemon api/bot.ts",
     "start:prod": "dotenv -e .env.production.local node api/bot.ts"
   },
   "author": "Barok Dagim Getachew",
@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/node": "^20.6.3",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "cross-env": "^7.0.3",
     "dotenv-cli": "^7.3.0",
     "eslint": "^8.49.0",
     "eslint-config-prettier": "^9.0.0",
