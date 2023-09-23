@@ -6,12 +6,15 @@ import {
   webhookCallback,
 } from "grammy";
 import { autoRetry } from "@grammyjs/auto-retry";
-
 import * as Sentry from "@sentry/node";
-
 import axios from "axios";
 import "dotenv/config";
+
 import type { VideoInfo } from "./types";
+
+Sentry.init({
+  dsn: "https://c0615c97fc2fdcb6bdf33bc3735859d0@o4505930555260928.ingest.sentry.io/4505930736992256",
+});
 
 const { BOT_TOKEN, API_AUTHORIZATION_KEY, ENV } = process.env;
 
@@ -22,10 +25,6 @@ const SHAWBERTO_REGEX = /Shawberto, you good?/g;
 const DEVBERTO_REGEX = /Devberto, you good?/g;
 
 if (!BOT_TOKEN) throw new Error("BOT_TOKEN is unset");
-
-Sentry.init({
-  dsn: "https://c0615c97fc2fdcb6bdf33bc3735859d0@o4505930555260928.ingest.sentry.io/4505930736992256",
-});
 
 const bot = new Bot(BOT_TOKEN);
 
