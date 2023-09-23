@@ -89,7 +89,7 @@ if (isDevelopment) {
   void bot.start();
 }
 
-export default webhookCallback(bot);
+export default webhookCallback(bot, "next-js");
 
 async function getTiktokVideoInfo(
   videoUrl: string
