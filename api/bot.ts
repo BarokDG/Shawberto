@@ -26,8 +26,7 @@ bot.command(
 bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
   if (!ctx.message?.text) return;
 
-  const loader = await ctx.reply("Processing video...");
-  let isError = false;
+  const loader = await ctx.reply("Processing link...");
 
   try {
     const videoUrl: VideoInfo | undefined = await getTiktokVideoInfo(
@@ -41,26 +40,23 @@ bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
     await bot.api.editMessageText(
       ctx.chat.id,
       loader.message_id,
-      "Video found ✅"
+      "Sending video..."
     );
 
     await ctx.replyWithVideo(videoUrl.data.play);
+
+    await bot.api.deleteMessage(ctx.chat.id, loader.message_id);
   } catch (error) {
     await bot.api.editMessageText(
       ctx.chat.id,
       loader.message_id,
-      "Error processing video❌"
+      "Error processing link❌"
     );
 
-    isError = true;
-  } finally {
-    const timer = setTimeout(
-      () => {
-        void bot.api.deleteMessage(ctx.chat.id, loader.message_id);
-        clearTimeout(timer);
-      },
-      isError ? 1000 : 0
-    );
+    const timer = setTimeout(() => {
+      void bot.api.deleteMessage(ctx.chat.id, loader.message_id);
+      clearTimeout(timer);
+    }, 1000);
   }
 });
 
