@@ -6,6 +6,9 @@ import {
   webhookCallback,
 } from "grammy";
 import { autoRetry } from "@grammyjs/auto-retry";
+
+import * as Sentry from "@sentry/node";
+
 import axios from "axios";
 import "dotenv/config";
 import type { VideoInfo } from "./types";
@@ -19,6 +22,10 @@ const SHAWBERTO_REGEX = /Shawberto, you good?/g;
 const DEVBERTO_REGEX = /Devberto, you good?/g;
 
 if (!BOT_TOKEN) throw new Error("BOT_TOKEN is unset");
+
+Sentry.init({
+  dsn: "https://c0615c97fc2fdcb6bdf33bc3735859d0@o4505930555260928.ingest.sentry.io/4505930736992256",
+});
 
 const bot = new Bot(BOT_TOKEN);
 
@@ -42,7 +49,8 @@ bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
     );
 
     if (!videoUrl || videoUrl.code === -1) {
-      throw new Error();
+      // eslint-disable-next-line @typescript-eslint/no-throw-literal
+      throw videoUrl;
     }
 
     await bot.api.editMessageText(
@@ -55,10 +63,12 @@ bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
 
     await bot.api.deleteMessage(ctx.chat.id, loader.message_id);
   } catch (error) {
+    Sentry.captureException(error);
+
     await bot.api.editMessageText(
       ctx.chat.id,
       loader.message_id,
-      "Error processing link❌"
+      "Error processing link"
     );
 
     const timer = setTimeout(() => {
@@ -100,6 +110,7 @@ async function getTiktokVideoInfo(
     const response = await axios.request(options);
     return response.data;
   } catch (error) {
+    Sentry.captureException(error);
     console.error(error);
   }
 }
