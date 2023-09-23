@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env DEBUG=\"grammy*\" dotenv -e .env.development.local nodemon api/bot.ts",
-    "stage": "dotenv -e .env.production.local tsc api/bot.ts"
+    "dev": "cross-env DEBUG=\"grammy*\" nodemon api/bot.ts",
+    "stage": "npm run set-webhook && ts-node api/bot.ts",
+    "set-webhook": "ts-node src/setWebhook.ts"
   },
   "author": "Barok Dagim Getachew",
   "license": "ISC",

@@ -10,7 +10,7 @@ import * as Sentry from "@sentry/node";
 import axios from "axios";
 import "dotenv/config";
 
-import type { VideoInfo } from "./types";
+import type { VideoInfo } from "../src/types";
 
 Sentry.init({
   dsn: "https://c0615c97fc2fdcb6bdf33bc3735859d0@o4505930555260928.ingest.sentry.io/4505930736992256",
