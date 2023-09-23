@@ -7,7 +7,7 @@
     "dev": "cross-env DEBUG=\"grammy*\" nodemon api/bot.ts",
     "stage": "npm run set-webhook && ts-node api/bot.ts",
     "set-webhook": "ts-node src/setWebhook.ts",
-    "set-webhook:prod": "dotenv -e .env.production ts-node src/setWebhook.ts --prod"
+    "set-webhook:prod": "dotenv -e .env.production ts-node src/setWebhook.ts"
   },
   "author": "Barok Dagim Getachew",
   "license": "ISC",
