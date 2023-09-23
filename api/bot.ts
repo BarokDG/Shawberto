@@ -1,4 +1,11 @@
-import { type Context, type NextFunction, type Transformer, Bot } from "grammy";
+import {
+  type Context,
+  type NextFunction,
+  type Transformer,
+  Bot,
+  webhookCallback,
+} from "grammy";
+import { autoRetry } from "@grammyjs/auto-retry";
 import axios from "axios";
 import "dotenv/config";
 import type { VideoInfo } from "./types";
@@ -15,6 +22,7 @@ if (!BOT_TOKEN) throw new Error("BOT_TOKEN is unset");
 
 const bot = new Bot(BOT_TOKEN);
 
+bot.api.config.use(autoRetry());
 bot.use(replyToMessageMiddleWare);
 
 bot.command(
@@ -68,7 +76,11 @@ bot
     async (ctx) => await ctx.reply(`${ctx.me.first_name} is running`)
   );
 
-void bot.start();
+if (isDevelopment) {
+  void bot.start();
+}
+
+export default webhookCallback(bot);
 
 async function getTiktokVideoInfo(
   videoUrl: string
