@@ -13,6 +13,7 @@ void (async function () {
   try {
     await bot.api.setWebhook(WEB_HOOK, {
       allowed_updates: ["edited_message", "message"],
+      drop_pending_updates: true,
     });
 
     console.log("Webhook set!");
