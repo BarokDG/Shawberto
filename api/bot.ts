@@ -58,7 +58,9 @@ bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
       "Sending video..."
     );
 
-    await ctx.replyWithVideo(videoUrl.data.play);
+    await ctx.replyWithVideo(videoUrl.data.play, {
+      caption: videoUrl.data.title,
+    });
 
     await bot.api.deleteMessage(ctx.chat.id, loader.message_id);
   } catch (error) {
@@ -86,7 +88,9 @@ bot
   );
 
 if (isDevelopment) {
-  void bot.start();
+  void bot.start({
+    drop_pending_updates: true,
+  });
 }
 
 export default webhookCallback(bot, "next-js");
