@@ -12,8 +12,10 @@ export interface VideoInfo {
     duration: number;
     play: string;
     wmplay: string;
+    hdplay: string;
     size: number;
     wm_size: number;
+    hd_size: number;
     music: string;
     music_info: {
       id: string;
