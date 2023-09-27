@@ -96,14 +96,12 @@ bot.on("::url").hears(TWITTER_LINK_REGEX, async (ctx) => {
       throw tweetObject;
     }
 
-    console.log(JSON.stringify(tweetObject, null, 2));
-
     let mediaUrl: string | undefined;
     let replyWith: "video" | undefined;
 
     if (
-      tweetObject.extended_entities.media[0].type === "video" ||
-      tweetObject.extended_entities.media[0].type === "animated_gif"
+      tweetObject.extended_entities?.media?.[0]?.type === "video" ||
+      tweetObject.extended_entities?.media?.[0]?.type === "animated_gif"
     ) {
       mediaUrl =
         tweetObject.extended_entities.media[0].video_info.variants.find(
@@ -112,8 +110,6 @@ bot.on("::url").hears(TWITTER_LINK_REGEX, async (ctx) => {
 
       replyWith = "video";
     }
-
-    console.log(mediaUrl);
 
     if (mediaUrl) {
       await bot.api.editMessageText(
@@ -125,6 +121,12 @@ bot.on("::url").hears(TWITTER_LINK_REGEX, async (ctx) => {
       await ctx.replyWithVideo(mediaUrl, {
         caption: tweetObject.text,
       });
+    } else {
+      await bot.api.editMessageText(
+        ctx.chat.id,
+        loader.message_id,
+        "Nothing to send"
+      );
     }
 
     await bot.api.deleteMessage(ctx.chat.id, loader.message_id);
