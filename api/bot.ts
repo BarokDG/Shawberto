@@ -111,8 +111,6 @@ bot.on("::url").hears(TWITTER_LINK_REGEX, async (ctx) => {
       replyWith = "video";
     }
 
-    console.log(mediaUrl);
-
     if (mediaUrl) {
       await bot.api.editMessageText(
         ctx.chat.id,
@@ -123,6 +121,12 @@ bot.on("::url").hears(TWITTER_LINK_REGEX, async (ctx) => {
       await ctx.replyWithVideo(mediaUrl, {
         caption: tweetObject.text,
       });
+    } else {
+      await bot.api.editMessageText(
+        ctx.chat.id,
+        loader.message_id,
+        "Nothing to send"
+      );
     }
 
     await bot.api.deleteMessage(ctx.chat.id, loader.message_id);
