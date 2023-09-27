@@ -7,20 +7,21 @@ import {
 } from "grammy";
 import { autoRetry } from "@grammyjs/auto-retry";
 import * as Sentry from "@sentry/node";
-import axios from "axios";
 import "dotenv/config";
 
-import type { VideoInfo } from "../src/types";
+import { getTiktokVideoInfo, getTweetInfo } from "../src/services";
+import type { TikTokVideoInfo, TweetInfo } from "../src/types";
+
+const { BOT_TOKEN, ENV, SENTRY_DSN } = process.env;
 
 Sentry.init({
-  dsn: "https://c0615c97fc2fdcb6bdf33bc3735859d0@o4505930555260928.ingest.sentry.io/4505930736992256",
+  dsn: SENTRY_DSN,
 });
-
-const { BOT_TOKEN, API_AUTHORIZATION_KEY, ENV } = process.env;
 
 const isDevelopment = ENV === "development";
 
 const TIKTOK_LINK_REGEX = /^https:\/\/(www|vm|vt).tiktok.com\/.*/g;
+const TWITTER_LINK_REGEX = /^https:\/\/(www\.)?(twitter|x).com\/.*/g;
 const SHAWBERTO_REGEX = /Shawberto, you good?/g;
 const DEVBERTO_REGEX = /Devberto, you good?/g;
 
@@ -43,7 +44,7 @@ bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
   const loader = await ctx.reply("Processing link...");
 
   try {
-    const videoUrl: VideoInfo | undefined = await getTiktokVideoInfo(
+    const videoUrl: TikTokVideoInfo | undefined = await getTiktokVideoInfo(
       ctx.message.text
     );
 
@@ -79,6 +80,70 @@ bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
   }
 });
 
+// Handle Twitter links
+bot.on("::url").hears(TWITTER_LINK_REGEX, async (ctx) => {
+  if (!ctx.message?.text) return;
+
+  const loader = await ctx.reply("Processing link...");
+
+  try {
+    const tweetObject: TweetInfo | undefined = await getTweetInfo(
+      ctx.message.text
+    );
+
+    if (!tweetObject) {
+      // eslint-disable-next-line @typescript-eslint/no-throw-literal
+      throw tweetObject;
+    }
+
+    console.log(JSON.stringify(tweetObject, null, 2));
+
+    let mediaUrl: string | undefined;
+    let replyWith: "video" | undefined;
+
+    if (
+      tweetObject.extended_entities.media[0].type === "video" ||
+      tweetObject.extended_entities.media[0].type === "animated_gif"
+    ) {
+      mediaUrl =
+        tweetObject.extended_entities.media[0].video_info.variants.find(
+          (variant) => variant.content_type === "video/mp4"
+        )?.url;
+
+      replyWith = "video";
+    }
+
+    console.log(mediaUrl);
+
+    if (mediaUrl) {
+      await bot.api.editMessageText(
+        ctx.chat.id,
+        loader.message_id,
+        `Sending ${replyWith}...`
+      );
+
+      await ctx.replyWithVideo(mediaUrl, {
+        caption: tweetObject.text,
+      });
+    }
+
+    await bot.api.deleteMessage(ctx.chat.id, loader.message_id);
+  } catch (error) {
+    Sentry.captureException(error);
+
+    await bot.api.editMessageText(
+      ctx.chat.id,
+      loader.message_id,
+      "Error processing link"
+    );
+
+    const timer = setTimeout(() => {
+      void bot.api.deleteMessage(ctx.chat.id, loader.message_id);
+      clearTimeout(timer);
+    }, 1000);
+  }
+});
+
 // Test if bot is running
 bot
   .on(":text")
@@ -94,29 +159,6 @@ if (isDevelopment) {
 }
 
 export default webhookCallback(bot, "next-js");
-
-async function getTiktokVideoInfo(
-  videoUrl: string
-): Promise<VideoInfo | undefined> {
-  const options = {
-    url: "https://tiktok-video-feature-summary.p.rapidapi.com/",
-    params: {
-      url: videoUrl,
-    },
-    headers: {
-      "X-RapidAPI-Key": API_AUTHORIZATION_KEY,
-      "X-RapidAPI-Host": "tiktok-video-feature-summary.p.rapidapi.com",
-    },
-  };
-
-  try {
-    const response = await axios.request(options);
-    return response.data;
-  } catch (error) {
-    Sentry.captureException(error);
-    console.error(error);
-  }
-}
 
 // Use telegram's reply to message feature for all messages. See https://telegram.org/blog/replies-mentions-hashtags?setln=en#replies
 function replyToMessageTransformer(ctx: Context): Transformer {
