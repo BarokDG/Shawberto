@@ -7,16 +7,17 @@ import {
 } from "grammy";
 import { autoRetry } from "@grammyjs/auto-retry";
 import * as Sentry from "@sentry/node";
-import axios from "axios";
 import "dotenv/config";
 
 import type { VideoInfo } from "../src/types";
+
+import { getTiktokVideoInfo } from "../src/services";
 
 Sentry.init({
   dsn: "https://c0615c97fc2fdcb6bdf33bc3735859d0@o4505930555260928.ingest.sentry.io/4505930736992256",
 });
 
-const { BOT_TOKEN, API_AUTHORIZATION_KEY, ENV } = process.env;
+const { BOT_TOKEN, ENV } = process.env;
 
 const isDevelopment = ENV === "development";
 
@@ -90,29 +91,6 @@ if (isDevelopment) {
 }
 
 export default webhookCallback(bot);
-
-async function getTiktokVideoInfo(
-  videoUrl: string
-): Promise<VideoInfo | undefined> {
-  const options = {
-    url: "https://tiktok-video-feature-summary.p.rapidapi.com/",
-    params: {
-      url: videoUrl,
-    },
-    headers: {
-      "X-RapidAPI-Key": API_AUTHORIZATION_KEY,
-      "X-RapidAPI-Host": "tiktok-video-feature-summary.p.rapidapi.com",
-    },
-  };
-
-  try {
-    const response = await axios.request(options);
-    return response.data;
-  } catch (error) {
-    Sentry.captureException(error);
-    console.error(error);
-  }
-}
 
 // Use telegram's reply to message feature for all messages. See https://telegram.org/blog/replies-mentions-hashtags?setln=en#replies
 function replyToMessageTransformer(ctx: Context): Transformer {

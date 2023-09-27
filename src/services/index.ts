@@ -1,0 +1,1 @@
+export { getTiktokVideoInfo } from "./getTiktokVideoInfo";
