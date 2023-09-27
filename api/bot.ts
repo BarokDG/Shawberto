@@ -9,15 +9,14 @@ import { autoRetry } from "@grammyjs/auto-retry";
 import * as Sentry from "@sentry/node";
 import "dotenv/config";
 
+import { getTiktokVideoInfo } from "../src/services";
 import type { TikTokVideoInfo } from "../src/types";
 
-import { getTiktokVideoInfo } from "../src/services";
+const { BOT_TOKEN, ENV, SENTRY_DSN } = process.env;
 
 Sentry.init({
-  dsn: "https://c0615c97fc2fdcb6bdf33bc3735859d0@o4505930555260928.ingest.sentry.io/4505930736992256",
+  dsn: SENTRY_DSN,
 });
-
-const { BOT_TOKEN, ENV } = process.env;
 
 const isDevelopment = ENV === "development";
 
