@@ -9,7 +9,7 @@ import { autoRetry } from "@grammyjs/auto-retry";
 import * as Sentry from "@sentry/node";
 import "dotenv/config";
 
-import type { VideoInfo } from "../src/types";
+import type { TikTokVideoInfo } from "../src/types";
 
 import { getTiktokVideoInfo } from "../src/services";
 
@@ -44,7 +44,7 @@ bot.on("::url").hears(TIKTOK_LINK_REGEX, async (ctx) => {
   const loader = await ctx.reply("Processing link...");
 
   try {
-    const videoUrl: VideoInfo | undefined = await getTiktokVideoInfo(
+    const videoUrl: TikTokVideoInfo | undefined = await getTiktokVideoInfo(
       ctx.message.text
     );
 

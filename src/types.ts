@@ -1,4 +1,4 @@
-export interface VideoInfo {
+export interface TikTokVideoInfo {
   code: number;
   msg: string;
   processed_time: string;

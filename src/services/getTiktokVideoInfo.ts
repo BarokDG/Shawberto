@@ -4,13 +4,13 @@ import * as Sentry from "@sentry/node";
 
 import "dotenv/config";
 
-import type { VideoInfo } from "../types";
+import type { TikTokVideoInfo } from "../types";
 
 const { API_AUTHORIZATION_KEY } = process.env;
 
 export async function getTiktokVideoInfo(
   videoUrl: string
-): Promise<VideoInfo | undefined> {
+): Promise<TikTokVideoInfo | undefined> {
   const options = {
     url: "https://tiktok-video-feature-summary.p.rapidapi.com/",
     params: {
