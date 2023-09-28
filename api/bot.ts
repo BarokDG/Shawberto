@@ -97,7 +97,6 @@ bot.on("::url").hears(TWITTER_LINK_REGEX, async (ctx) => {
     }
 
     let mediaUrl: string | undefined;
-    let replyWith: "video" | undefined;
 
     if (
       tweetObject.extended_entities?.media?.[0]?.type === "video" ||
@@ -107,15 +106,13 @@ bot.on("::url").hears(TWITTER_LINK_REGEX, async (ctx) => {
         tweetObject.extended_entities.media[0].video_info.variants.find(
           (variant) => variant.content_type === "video/mp4"
         )?.url;
-
-      replyWith = "video";
     }
 
     if (mediaUrl) {
       await bot.api.editMessageText(
         ctx.chat.id,
         loader.message_id,
-        `Sending ${replyWith}...`
+        `Sending video...`
       );
 
       await ctx.replyWithVideo(mediaUrl, {
