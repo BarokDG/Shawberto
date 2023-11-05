@@ -4,28 +4,25 @@ import * as Sentry from "@sentry/node";
 
 import "dotenv/config";
 
-import type { TweetInfo } from "../types";
+import type { InstagramPostInfoResponse } from "../types";
 
 const { API_AUTHORIZATION_KEY } = process.env;
 
-export async function getTweetInfo(
-  tweetUrl: string
-): Promise<TweetInfo | undefined> {
-  const id = extractTweetID(tweetUrl);
+export async function getInstagramPostInfo(
+  instaReelUrl: string
+): Promise<InstagramPostInfoResponse | undefined> {
+  const shortCode = extractShortCode(instaReelUrl);
 
-  if (!id) {
+  if (!shortCode) {
     return;
   }
 
   const options = {
     method: "GET",
-    url: "https://twitter154.p.rapidapi.com/tweet/details",
-    params: {
-      tweet_id: id,
-    },
+    url: `https://instagram243.p.rapidapi.com/postdetail/${shortCode}`,
     headers: {
       "X-RapidAPI-Key": API_AUTHORIZATION_KEY,
-      "X-RapidAPI-Host": "twitter154.p.rapidapi.com",
+      "X-RapidAPI-Host": "instagram243.p.rapidapi.com",
     },
   };
 
@@ -38,7 +35,7 @@ export async function getTweetInfo(
   }
 }
 
-function extractTweetID(url: string): string | null {
-  const match = url.match(/status\/(\d+)/);
+function extractShortCode(url: string): string | null {
+  const match = url.match(/reel\/(\w+)/);
   return match ? match[1] : null;
 }
