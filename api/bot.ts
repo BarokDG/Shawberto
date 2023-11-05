@@ -21,19 +21,26 @@ import {
   SECONDS_TO_SHOW_ERROR_BEFORE_DELETING,
 } from "../src/constants";
 
-const { BOT_TOKEN, ENV, SENTRY_DSN } = process.env;
-
-Sentry.init({
-  dsn: SENTRY_DSN,
-});
+const { BOT_TOKEN, ENV, SENTRY_DSN, VERCEL_ENV } = process.env;
 
 const isDevelopment = ENV === "development";
+
+if (!isDevelopment) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+  });
+}
 
 if (!BOT_TOKEN) throw new Error("BOT_TOKEN is unset");
 
 const bot = new Bot(BOT_TOKEN);
 
-bot.api.config.use(autoRetry());
+bot.api.config.use(
+  autoRetry({
+    maxRetryAttempts: 1,
+    maxDelaySeconds: 10,
+  })
+);
 bot.use(replyToMessageMiddleWare);
 
 bot.command(
@@ -47,7 +54,9 @@ bot.on("::url").hears(TWITTER_LINK_REGEX, handleTwitterLink);
 bot
   .on(":text")
   .hears(
-    isDevelopment ? DEVBERTO_REGEX : SHAWBERTO_REGEX,
+    isDevelopment || VERCEL_ENV === "preview"
+      ? DEVBERTO_REGEX
+      : SHAWBERTO_REGEX,
     async (ctx) => await ctx.reply(`${ctx.me.first_name} is running`)
   );
 
