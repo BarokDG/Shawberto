@@ -33,7 +33,12 @@ if (!BOT_TOKEN) throw new Error("BOT_TOKEN is unset");
 
 const bot = new Bot(BOT_TOKEN);
 
-bot.api.config.use(autoRetry());
+bot.api.config.use(
+  autoRetry({
+    maxRetryAttempts: 1,
+    maxDelaySeconds: 10,
+  })
+);
 bot.use(replyToMessageMiddleWare);
 
 bot.command(
