@@ -11,11 +11,20 @@ import { autoRetry } from "@grammyjs/auto-retry";
 import * as Sentry from "@sentry/node";
 import "dotenv/config";
 
-import { getTiktokVideoInfo, getTweetInfo } from "../src/services";
-import type { TikTokVideoInfo, TweetInfo } from "../src/types";
+import {
+  getTiktokVideoInfo,
+  getTweetInfo,
+  getInstagramPostInfo,
+} from "../src/services";
+import type {
+  InstagramPostInfoResponse,
+  TikTokVideoInfo,
+  TweetInfo,
+} from "../src/types";
 import {
   TIKTOK_LINK_REGEX,
   TWITTER_LINK_REGEX,
+  INSTAGRAM_REEL_LINK_REGEX,
   SHAWBERTO_REGEX,
   DEVBERTO_REGEX,
   SECONDS_TO_SHOW_ERROR_BEFORE_DELETING,
@@ -50,6 +59,7 @@ bot.command(
 
 bot.on("::url").hears(TIKTOK_LINK_REGEX, handleTikTokLink);
 bot.on("::url").hears(TWITTER_LINK_REGEX, handleTwitterLink);
+bot.on("::url").hears(INSTAGRAM_REEL_LINK_REGEX, handleInstagramReelLink);
 
 bot
   .on(":text")
@@ -173,6 +183,38 @@ async function handleTwitterLink(ctx: HearsContext<Context>): Promise<void> {
         "Nothing to send"
       );
     }
+
+    await bot.api.deleteMessage(ctx.chat.id, loader.message_id);
+  } catch (error) {
+    await handleError(error, ctx, loader);
+  }
+}
+
+async function handleInstagramReelLink(
+  ctx: HearsContext<Context>
+): Promise<void> {
+  if (!ctx.message?.text) return;
+
+  const loader = await ctx.reply("Processing link...");
+
+  try {
+    const postInfo: InstagramPostInfoResponse | undefined =
+      await getInstagramPostInfo(ctx.message.text);
+
+    if (!postInfo || postInfo.status === "fail") {
+      // eslint-disable-next-line @typescript-eslint/no-throw-literal
+      throw postInfo;
+    }
+
+    await bot.api.editMessageText(
+      ctx.chat.id,
+      loader.message_id,
+      "Sending video..."
+    );
+
+    await ctx.replyWithVideo(postInfo.data.video_versions[0].url, {
+      caption: postInfo.data.caption.text,
+    });
 
     await bot.api.deleteMessage(ctx.chat.id, loader.message_id);
   } catch (error) {
