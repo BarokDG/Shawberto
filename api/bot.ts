@@ -130,7 +130,7 @@ async function handleTikTokLink(ctx: HearsContext<Context>): Promise<void> {
     );
 
     await ctx.replyWithVideo(videoUrl.data.play, {
-      caption: videoUrl.data.title,
+      caption: truncateCaption(videoUrl.data.title),
     });
 
     await bot.api.deleteMessage(ctx.chat.id, loader.message_id);
@@ -174,7 +174,7 @@ async function handleTwitterLink(ctx: HearsContext<Context>): Promise<void> {
       );
 
       await ctx.replyWithVideo(mediaUrl, {
-        caption: tweetObject.text,
+        caption: truncateCaption(tweetObject.text),
       });
     } else {
       await bot.api.editMessageText(
@@ -213,7 +213,7 @@ async function handleInstagramReelLink(
     );
 
     await ctx.replyWithVideo(postInfo.data.video_versions[0].url, {
-      caption: postInfo.data.caption.text,
+      caption: truncateCaption(postInfo.data.caption.text),
     });
 
     await bot.api.deleteMessage(ctx.chat.id, loader.message_id);
@@ -240,4 +240,12 @@ async function handleError(
   );
 
   await bot.api.deleteMessage(ctx.chat?.id as number, loader.message_id);
+}
+
+function truncateCaption(caption: string): string {
+  if (caption.length > 200) {
+    return `${caption.substring(0, 200)}...`;
+  }
+
+  return caption;
 }
