@@ -27,7 +27,8 @@ import {
   INSTAGRAM_REEL_LINK_REGEX,
   SHAWBERTO_REGEX,
   DEVBERTO_REGEX,
-  SECONDS_TO_SHOW_ERROR_BEFORE_DELETING,
+  DURATION_IN_MILLI_SECONDS_TO_SHOW_ERROR_BEFORE_DELETING,
+  MAX_CAPTION_CHARACTER_LENGTH
 } from "../src/constants";
 
 const { BOT_TOKEN, ENV, SENTRY_DSN, VERCEL_ENV } = process.env;
@@ -236,15 +237,15 @@ async function handleError(
   );
 
   await new Promise((resolve) =>
-    setTimeout(resolve, SECONDS_TO_SHOW_ERROR_BEFORE_DELETING)
+    setTimeout(resolve, DURATION_IN_MILLI_SECONDS_TO_SHOW_ERROR_BEFORE_DELETING)
   );
 
   await bot.api.deleteMessage(ctx.chat?.id as number, loader.message_id);
 }
 
 function truncateCaption(caption: string): string {
-  if (caption.length > 200) {
-    return `${caption.substring(0, 200)}...`;
+  if (caption.length > MAX_CAPTION_CHARACTER_LENGTH) {
+    return `${caption.substring(0, MAX_CAPTION_CHARACTER_LENGTH)}...`;
   }
 
   return caption;
