@@ -1,5 +1,5 @@
 import { webhookCallback } from "grammy";
-import { autoRetry } from "@grammyjs/auto-retry";
+
 import "dotenv/config";
 
 import { bot } from "../src/index";
@@ -11,7 +11,6 @@ import {
   SHAWBERTO_REGEX,
   DEVBERTO_REGEX,
 } from "../src/constants";
-import { replyToMessageMiddleWare } from "../src/middleware/replyToMessage";
 import {
   handleTiktokLink,
   handleInstagramReelLink,
@@ -20,14 +19,6 @@ import {
 
 const { ENV, VERCEL_ENV } = process.env;
 const isDevelopment = ENV === "development";
-
-bot.api.config.use(
-  autoRetry({
-    maxRetryAttempts: 1,
-    maxDelaySeconds: 10,
-  })
-);
-bot.use(replyToMessageMiddleWare);
 
 bot.command(
   "start",
