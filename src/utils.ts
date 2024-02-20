@@ -4,7 +4,7 @@ import * as Sentry from "@sentry/node";
 
 import { bot } from "./index";
 
-import { SECONDS_TO_SHOW_ERROR_BEFORE_DELETING } from "./constants";
+import { DURATION_IN_MILLI_SECONDS_TO_SHOW_ERROR_BEFORE_DELETING } from "./constants";
 
 export function truncateCaption(caption: string): string {
   if (caption.length > 200) {
@@ -28,7 +28,7 @@ export async function handleError(
   );
 
   await new Promise((resolve) =>
-    setTimeout(resolve, SECONDS_TO_SHOW_ERROR_BEFORE_DELETING)
+    setTimeout(resolve, DURATION_IN_MILLI_SECONDS_TO_SHOW_ERROR_BEFORE_DELETING)
   );
 
   await bot.api.deleteMessage(ctx.chat?.id as number, loader.message_id);

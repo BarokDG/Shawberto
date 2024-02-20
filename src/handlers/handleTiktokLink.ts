@@ -3,6 +3,7 @@ import { bot } from "../index";
 import { getTiktokVideoInfo } from "../services";
 import type { TikTokVideoInfo } from "../types";
 import { truncateCaption, handleError } from "../utils";
+import { TIKTOK_LINK_REGEX } from "../constants";
 
 export async function handleTiktokLink(
   ctx: HearsContext<Context>
@@ -12,9 +13,13 @@ export async function handleTiktokLink(
   const loader = await ctx.reply("Processing link...");
 
   try {
-    const videoUrl: TikTokVideoInfo | undefined = await getTiktokVideoInfo(
-      ctx.message.text
-    );
+    const url = ctx.message.text.match(TIKTOK_LINK_REGEX)?.[0];
+
+    if (!url) {
+      throw new Error("Invalid TikTok link");
+    }
+
+    const videoUrl: TikTokVideoInfo | undefined = await getTiktokVideoInfo(url);
 
     if (!videoUrl || videoUrl.code === -1) {
       // eslint-disable-next-line @typescript-eslint/no-throw-literal
