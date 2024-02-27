@@ -1,5 +1,5 @@
 export const TIKTOK_LINK_REGEX =
-  /(https:\/\/)?(www|vm|vt)\.tiktok\.com\/t\/[a-zA-Z0-9_-]+\/?/;
+  /(https:\/\/)?(www|vm|vt)\.tiktok\.com\/(t\/)?[a-zA-Z0-9_-]+\/?/;
 export const TWITTER_LINK_REGEX =
   /(https:\/\/)?(www\.)?(twitter|x).com\/[a-zA-Z0-9_-]+\/?/;
 export const INSTAGRAM_REEL_LINK_REGEX =
