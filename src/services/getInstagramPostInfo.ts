@@ -19,10 +19,13 @@ export async function getInstagramPostInfo(
 
   const options = {
     method: "GET",
-    url: `https://instagram243.p.rapidapi.com/postdetail/${shortCode}`,
+    url: "https://instagram-scraper-api2.p.rapidapi.com/v1/post_info",
+    params: {
+      code_or_id_or_url: shortCode,
+    },
     headers: {
       "X-RapidAPI-Key": API_AUTHORIZATION_KEY,
-      "X-RapidAPI-Host": "instagram243.p.rapidapi.com",
+      "X-RapidAPI-Host": "instagram-scraper-api2.p.rapidapi.com",
     },
   };
 
